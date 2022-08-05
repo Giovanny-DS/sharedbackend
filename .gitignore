@@ -5,5 +5,5 @@
 /uploads
 /node_modules
 yarn-error.log
-/frontend
+# /frontend
 
