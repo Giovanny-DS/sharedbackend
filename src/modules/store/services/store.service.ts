@@ -8,6 +8,7 @@ import { StoreService as MedusaStoreService } from '@medusajs/medusa/dist/servic
 import { Store } from '../entities/store.entity';
 import StoreRepository from '../repositories/store.repository';
 import { User } from '../../user/entities/user.entity';
+import { hasPermission } from '../../permission/permissions.utils';
 
 interface ConstructorParams {
 	loggedInUser?: User;
@@ -49,15 +50,15 @@ export default class StoreService extends MedusaStoreService {
 	): Promise<EntityEventType<User, 'Insert'>> {
 		const { event } = params;
 		let store_id = Object.keys(this.container).includes("loggedInUser")
-      ? this.container.loggedInUser.store_id
-      : null;
+			? this.container.loggedInUser.store_id
+			: null;
 		if (!store_id) {
 			const createdStore = await this.withTransaction(event.manager).createForUser(event.entity);
 			if (!!createdStore) {
 				store_id = createdStore.id;
 			}
 		}
-		
+
 		event.entity.store_id = store_id;
 
 		return event;
@@ -69,7 +70,7 @@ export default class StoreService extends MedusaStoreService {
 	): Promise<EntityEventType<Invite, 'Insert'>> {
 		const { event } = params;
 		let store_id = this.container.loggedInUser.store_id
-		
+
 		if (!event.entity.store_id && store_id) {
 			event.entity.store_id = store_id;
 		}

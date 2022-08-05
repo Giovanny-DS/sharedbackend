@@ -50,7 +50,7 @@ export default class UserService extends MedusaUserService {
         const query = this.buildQuery_({ id: validatedId }, config);
 
         const user = await userRepo.findOne(query);
-
+        console.log({ user })
         if (!user) {
             throw new MedusaError(MedusaError.Types.NOT_FOUND, `User with id: ${userId} was not found`);
         }
@@ -62,11 +62,11 @@ export default class UserService extends MedusaUserService {
         if (Object.keys(this.container).includes('loggedInUser') && this.container.loggedInUser.store_id) {
             selector['store_id'] = this.container.loggedInUser.store_id;
         }
-        
+
         return super.buildQuery_(selector, config);
     }
 
-    public async addUserToStore (user_id, store_id) {
+    public async addUserToStore(user_id, store_id) {
         await this.atomicPhase_(async (m) => {
             const userRepo = m.getCustomRepository(this.userRepository);
             const query = this.buildQuery_({ id: user_id });

@@ -7,8 +7,10 @@ import UserService from '../services/user.service';
 export class LoggedInUserMiddleware implements MedusaMiddleware {
     public async consume(req: MedusaAuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
         const userService = req.scope.resolve('userService') as UserService;
+
         const loggedInUser = await userService.retrieve(req.user.userId, {
-            select: ['id', 'store_id']
+            select: ['id', 'store_id', 'role_id'],
+            relations: ['teamRole', 'teamRole.permissions'],
         });
         req.scope.register({
             loggedInUser: {
